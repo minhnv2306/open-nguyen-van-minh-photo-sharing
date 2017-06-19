@@ -21,4 +21,16 @@ class Image extends Model
         'created_at',
         'updated_at'
     ];
+    public function comments()
+    {
+        return $this->hasMany('App\Models\Comment');
+    }
+    public function likes()
+    {
+        return $this->hasMany('App\Models\Like');
+    }
+    public function user()
+    {
+        $this->belongsTo('App\Models\User');
+    }
 }
