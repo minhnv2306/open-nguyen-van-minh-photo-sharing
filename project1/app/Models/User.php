@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,4 +27,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+    public function images()
+    {
+        return $this->hasMany('App\Models\Image');
+    }
+    public function likes()
+    {
+        return $this->hasMany('App\Models\Like');
+    }
+    public function comments()
+    {
+        return $this->hasMany('App\Models\Comment');
+    }
 }
