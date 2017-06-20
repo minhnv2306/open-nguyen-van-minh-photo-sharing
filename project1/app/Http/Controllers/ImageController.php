@@ -21,4 +21,31 @@ class ImageController extends Controller
             'like' => $like
         ]);
     }
+    /* Phương thức di chuyển ảnh vào thư mục images */
+    public function moveImage(Request $request)
+    {
+        $this->validate($request, [
+            'image' => 'required|mimes:png,jpeg,jpg,gif|max:10240'
+        ]);
+
+        $file = $request->file('image');
+
+        // Move Uploaded File
+        $destinationPath = 'images';
+        $file->move($destinationPath, $file->getClientOriginalName());
+        return view('postimage', [
+            'path' => $file->getClientOriginalName()
+        ]);
+    }
+    /* Phương thức đăng ảnh */
+    public function postImage(Request $request, Image $image)
+    {
+        $scope = $request->scope;
+        $description = $request->description;
+        $path = $request->path;
+        $userId = Auth::user()->id;
+        if ($image->postImage($scope, $description, $path, $userId)) {
+            return redirect('home');
+        }
+    }
 }
