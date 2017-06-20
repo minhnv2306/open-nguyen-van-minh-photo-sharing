@@ -11,6 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'ImageController@getImage');
+
+Auth::routes();
+
+Route::get('home', 'ImageController@getImage');
+Route::get('chooseimage', function()  {
+    return view('chooseimage');
 });
+Route::post('moveimage', 'ImageController@moveImage');
+Route::post('postimage', 'ImageController@postImage');
