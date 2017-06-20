@@ -16,8 +16,10 @@ Route::get('/', 'ImageController@getImage');
 Auth::routes();
 
 Route::get('home', 'ImageController@getImage');
-Route::get('chooseimage', function()  {
+Route::get('chooseimage', function() {
     return view('chooseimage');
 });
 Route::post('moveimage', 'ImageController@moveImage');
 Route::post('postimage', 'ImageController@postImage');
+Route::get('test', 'ImageController@test');
+Route::get('storeimage', 'ImageController@storeImage');

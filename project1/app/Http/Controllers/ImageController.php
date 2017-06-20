@@ -16,16 +16,9 @@ class ImageController extends Controller
         // Get all images in database
         $images = $image->getImage();
         // Get all images what user liked
-        if (Auth::check()) {
-            $userId = Auth::user()->id;
-            $tablelike = $like->getLikeByUserId($userId);
-        }
-        else {
-            $tablelike = null;
-        }
         return view('home1', [
             'images' => $images,
-            'tablelike' => $tablelike
+            'like' => $like
         ]);
     }
     /* Phương thức di chuyển ảnh vào thư mục images */
@@ -54,5 +47,20 @@ class ImageController extends Controller
         if ($image->postImage($scope, $description, $path, $userId)) {
             return redirect('home');
         }
+    }
+    /* Phương thức lấy kho ảnh của một user*/
+    public function storeImage(Request $request, Image $image)
+    {
+        $userId = Auth::user()->id;
+        $images = $image->storeImage($userId);
+        return view('storeimage', [
+            'images' => $images
+        ]);
+    }
+    public function test()
+    {
+        $userId = 2;
+        $imageId = 10;
+        dd(count(Like::isLike($userId, $imageId)));
     }
 }
