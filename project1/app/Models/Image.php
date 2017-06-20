@@ -11,6 +11,7 @@ class Image extends Model
      *
      * @var array
      */
+    protected $primaryKey = 'image_id';
     protected $fillable = [
         'image_id',
         'scope',
@@ -31,6 +32,11 @@ class Image extends Model
     }
     public function user()
     {
-        $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\User', 'user_id');
     }
+    public function getImage()
+    {
+        return Image::all();
+    }
+
 }

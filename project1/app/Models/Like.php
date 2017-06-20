@@ -25,4 +25,16 @@ class Like extends Model
     {
         return $this->belongsTo('App\Models\Image');
     }
+    public function getLikeByUserId($userId)
+    {
+        return Like::all()
+            ->where('user_id', $userId);
+    }
+    public function isLike($userId, $imageId)
+    {
+        return Like::where([
+            ['user_id', '=', $userId],
+            ['image_id', '=', $imageId],
+        ])->get();
+    }
 }
