@@ -10,21 +10,15 @@ use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
 {
+    /* Phương thức lấy toàn bộ ảnh và các ảnh đã like của người dùng */
     public function getImage(Image $image, Like $like)
     {
         // Get all images in database
         $images = $image->getImage();
         // Get all images what user liked
-        if (Auth::check()) {
-            $userId = Auth::user()->id;
-            $tablelike = $like->getLikeByUserId($userId);
-        }
-        else {
-            $tablelike = null;
-        }
         return view('home1', [
             'images' => $images,
-            'tablelike' => $tablelike
+            'like' => $like
         ]);
     }
 }
