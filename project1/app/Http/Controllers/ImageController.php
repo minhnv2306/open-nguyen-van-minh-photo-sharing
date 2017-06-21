@@ -48,4 +48,19 @@ class ImageController extends Controller
             return redirect('home');
         }
     }
+    /* Phương thức lấy kho ảnh của một user*/
+    public function storeImage(Request $request, Image $image)
+    {
+        $userId = Auth::user()->id;
+        $images = $image->storeImage($userId);
+        return view('storeimage', [
+            'images' => $images
+        ]);
+    }
+    public function test()
+    {
+        $userId = 2;
+        $imageId = 10;
+        dd(count(Like::isLike($userId, $imageId)));
+    }
 }
