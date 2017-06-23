@@ -3,25 +3,50 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
 use App\Models\Image;
 use App\Models\Like;
 use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
 {
-    /* Phương thức lấy toàn bộ ảnh và các ảnh đã like của người dùng */
-    public function getImage(Image $image, Like $like)
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Like $like)
     {
-        // Get all images in database
-        $images = $image->getImage();
-        // Get all images what user liked
+        //
+        $images = Image::orderBy('created_at', 'desc')
+            ->get();
         return view('home1', [
             'images' => $images,
             'like' => $like
         ]);
     }
-    /* Phương thức di chuyển ảnh vào thư mục images */
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(Request $request)
+    {
+        //
+        Image::create([
+            'scope' => $request->scope,
+            'description' => $request->description,
+            'path' => $request->path,
+            'user_id' => Auth::user()->id,
+            'like'  => '0',
+        ]);
+        return redirect('home');
+    }
+    public function destroy($id)
+    {
+        //
+    }
+    /* Phương thức di chuyển ảnh vào thư mục images trước khi đăng*/
     public function moveImage(Request $request)
     {
         $this->validate($request, [
@@ -29,38 +54,51 @@ class ImageController extends Controller
         ]);
 
         $file = $request->file('image');
+        $destinationPath = config('app.storeimage');
 
-        // Move Uploaded File
-        $destinationPath = 'images';
         $file->move($destinationPath, $file->getClientOriginalName());
         return view('postimage', [
             'path' => $file->getClientOriginalName()
         ]);
     }
-    /* Phương thức đăng ảnh */
-    public function postImage(Request $request, Image $image)
+    public function storeImage(Request $request)
     {
-        $scope = $request->scope;
-        $description = $request->description;
-        $path = $request->path;
-        $userId = Auth::user()->id;
-        if ($image->postImage($scope, $description, $path, $userId)) {
-            return redirect('home');
-        }
-    }
-    /* Phương thức lấy kho ảnh của một user*/
-    public function storeImage(Request $request, Image $image)
-    {
-        $userId = Auth::user()->id;
-        $images = $image->storeImage($userId);
+        $images = Image::where('user_id', Auth::user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('storeimage', [
             'images' => $images
         ]);
     }
-    public function test()
+    /* Phương thức show thông tin ảnh trước khi chỉnh sửa */
+    public function showImage(Request $request)
     {
-        $userId = 2;
-        $imageId = 10;
-        dd(count(Like::isLike($userId, $imageId)));
+        $imageId = $request->id;
+        // Chỉ được phép chỉnh sửa nếu ảnh đúng là của user
+        $image = Image::find($imageId);
+        if ($image && $image->user_id === Auth::user()->id) {
+            return view('editimage', [
+                'image' => $image
+            ]);
+        } else {
+            return redirect('/error');
+        }
+    }
+    /* Phương thức cập nhật thông tin ảnh */
+    public function updateImage(Request $request)
+    {
+        $scope = $request->scope;
+        $description = $request->description;
+        $imageId = $request->imageId;
+        // Chỉ cập nhật nếu ảnh đúng là của user
+        $image = Image::find($imageId);
+        if ($image && $image->user_id === Auth::user()->id) {
+            $image->scope = $request->scope;
+            $image->description = $request->description;
+            $image->save();
+            return redirect('storeimage');
+        } else {
+            return redirect('/error');
+        }
     }
 }

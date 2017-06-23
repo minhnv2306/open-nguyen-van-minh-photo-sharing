@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Image extends Model
 {
@@ -34,9 +35,4 @@ class Image extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
-    public function getImage()
-    {
-        return Image::all();
-    }
-
 }

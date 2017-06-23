@@ -16,10 +16,19 @@ Route::get('/', 'ImageController@getImage');
 Auth::routes();
 
 Route::get('home', 'ImageController@getImage');
-Route::get('chooseimage', function() {
-    return view('chooseimage');
+
+Route::middleware(['auth'])->group(function() {
+    Route::get('chooseimage', function() {
+        return view('chooseimage');
+    });
+    Route::resource('images', 'ImageController');
+    Route::post('images/create', 'ImageController@create');
+    Route::post('moveimage', 'ImageController@moveImage');
+    Route::get('storeimage', 'ImageController@storeImage');
+    Route::get('editimage/{id}', 'ImageController@showImage');
+    Route::post('updateimage', 'ImageController@updateImage');
 });
-Route::post('moveimage', 'ImageController@moveImage');
-Route::post('postimage', 'ImageController@postImage');
-Route::get('test', 'ImageController@test');
-Route::get('storeimage', 'ImageController@storeImage');
+Route::get('/error',function() {
+   return view('error/404');
+});
+Route::get('home', 'ImageController@index');
