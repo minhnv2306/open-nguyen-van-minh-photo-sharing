@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\Like;
+use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
@@ -42,9 +43,23 @@ class ImageController extends Controller
         ]);
         return redirect('home');
     }
-    public function destroy($id)
+    public function destroy(Request $request)
     {
         //
+        $imageId = $request->imageId;
+        $image = Image::find($imageId);
+        // Kiểm tra sở hữu ảnh
+        if ($image && $image->user_id === Auth::user()->id) {
+            // Xóa dữ liệu ảnh trong Image, Comment và Like
+            $image->delete();
+            Comment::where('user_id', Auth::user()->id);
+            Like::where('user_id', Auth::user()->id);
+            return redirect('home');
+
+        }
+        else {
+            return redirect('/error');
+        }
     }
     /* Phương thức di chuyển ảnh vào thư mục images trước khi đăng*/
     public function moveImage(Request $request)
@@ -98,6 +113,22 @@ class ImageController extends Controller
             $image->save();
             return redirect('storeimage');
         } else {
+            return redirect('/error');
+        }
+    }
+    /* Phuowng thức show ảnh trước khi xóa */
+    public function isDeleteImage(Request $request)
+    {
+        $imageId = $request->id;
+        $image = Image::find($imageId);
+
+        // Kiểm tra quyền sở hữu ảnh ^^
+        if ($image && $image->user_id === Auth::user()->id) {
+            return view('deleteimage', [
+                'image' => $image
+            ]);
+        }
+        else {
             return redirect('/error');
         }
     }

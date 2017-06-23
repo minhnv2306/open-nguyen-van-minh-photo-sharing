@@ -27,6 +27,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('storeimage', 'ImageController@storeImage');
     Route::get('editimage/{id}', 'ImageController@showImage');
     Route::post('updateimage', 'ImageController@updateImage');
+    Route::get('deleteimage/{id}', 'ImageController@isDeleteImage');
 });
 Route::get('/error',function() {
    return view('error/404');
