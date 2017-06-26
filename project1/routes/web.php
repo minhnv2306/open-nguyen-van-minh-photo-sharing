@@ -11,25 +11,26 @@
 |
 */
 
-Route::get('/', 'ImageController@getImage');
+Route::get('/', 'HomeController@index');
 
 Auth::routes();
 
-Route::get('home', 'ImageController@getImage');
+Route::get('/home', 'HomeController@index');
 
 Route::middleware(['auth'])->group(function() {
     Route::get('chooseimage', function() {
         return view('chooseimage');
     });
     Route::resource('images', 'ImageController');
-    Route::post('images/create', 'ImageController@create');
     Route::post('moveimage', 'ImageController@moveImage');
     Route::get('storeimage', 'ImageController@storeImage');
-    Route::get('editimage/{id}', 'ImageController@showImage');
-    Route::post('updateimage', 'ImageController@updateImage');
-    Route::get('deleteimage/{id}', 'ImageController@isDeleteImage');
+    Route::get('deleteimage/{id}', 'ImageController@validateDeleteImage');
+    Route::post('addcomment', 'CommentController@create');
+    Route::post('addlike', 'LikeController@create');
+    Route::post('removelike', 'LikeController@destroy');
+    Route::resource('comments', 'CommentController');
 });
 Route::get('/error',function() {
    return view('error/404');
 });
-Route::get('home', 'ImageController@index');
+
